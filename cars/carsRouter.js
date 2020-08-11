@@ -18,6 +18,17 @@ router.get('/:id', validateCarId, (req, res) => {
     res.status(200).json({ car: req.car });
 });
 
+router.post('/', validateCar, (req, res) => {
+    Cars.insert(req.body)
+        .then(id => {
+            res.status(201).json({ id });
+        })
+        .catch(err => {
+            console.log(err.message);
+            res.status(500).json({ error: err.message });
+        })
+});
+
 // validation middleware
 
 function validateCarId(req, res, next) {
@@ -36,6 +47,15 @@ function validateCarId(req, res, next) {
             console.log(err.message);
             res.status(500).json({ error: err.message });
         })
+}
+
+function validateCar(req, res, next) {
+    const car = req.body;
+    if (!car.vin || !car.make || !car.model || !car.mileage) {
+        res.status(400).json({ message: "Missing required field (vin, make, model, mileage)" });
+    } else {
+        next();
+    }
 }
 
 module.exports = router;
