@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
         .catch(err => {
             console.log(err.message);
             res.status(500).json({ error: err.message });
-        })
+        });
 });
 
 router.get('/:id', validateCarId, (req, res) => {
@@ -20,13 +20,35 @@ router.get('/:id', validateCarId, (req, res) => {
 
 router.post('/', validateCar, (req, res) => {
     Cars.insert(req.body)
-        .then(id => {
-            res.status(201).json({ id });
+        .then(car => {
+            res.status(201).json({ car });
         })
         .catch(err => {
             console.log(err.message);
             res.status(500).json({ error: err.message });
+        });
+});
+
+router.put('/:id', validateCarId, validateCar, (req, res) => {
+    Cars.update(req.params.id, req.body)
+        .then(records => {
+            res.status(200).json({ message: `Successfully updated car with id ${req.params.id}` });
         })
+        .catch(err => {
+            console.log(err.message);
+            res.status(500).json({ error: err.message });
+        });
+});
+
+router.delete('/:id', validateCarId, (req, res) => {
+    Cars.remove(req.params.id)
+        .then(records => {
+            res.status(200).json({ message: `Successfully deleted car with id ${req.params.id}` });
+        })
+        .catch(err => {
+            console.log(err.message);
+            res.status(500).json({ error: err.message });
+        });
 });
 
 // validation middleware
